@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaishnavi Sanap Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: url('https://i.pinimg.com/736x/65/81/4b/65814b924b3a0b8b438abbf01798623d.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    .window {
+      box-shadow: 6px 6px 0px #000000;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
+      position: absolute;
+    }
+    .fade-text {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 4rem;
+      color: #22;
+      text-align: center;
+      font-weight: 800;
+      opacity: 0.6;
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      letter-spacing: 0.2rem;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      gap: 8rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border-radius: 1rem;
+    }
+    .icon-button {
+      font-size: 1.5rem;
+      cursor: pointer;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .translucent-btn {
+      background: rgba(255, 255, 255, 0.3);
+      color: #000;
+    }
+    .icon-button img {
+      width: 70px;
+      height: 70px;
+      opacity: 0.7;
+      border-radius: 1.5rem;
+    }
+    .icon-button span {
+      font-size: 0.75rem;
+      color: black;
+      margin-top: 0.3rem;
+    }
+    p, li, a, em {
+      font-weight: normal !important;
+    }
+  </style>
+  <script>
+    const popups = ['aboutPopup', 'projectsPopup', 'contactPopup'];
+
+    function togglePopup(id) {
+      popups.forEach(popupId => {
+        if (popupId !== id) {
+          document.getElementById(popupId).classList.add('hidden');
+        }
+      });
+
+      const el = document.getElementById(id);
+      if (!el.classList.contains('hidden')) {
+        el.style.top = `${parseInt(el.style.top || 100) + 40}px`;
+      }
+      el.classList.toggle('hidden');
+    }
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time-display').textContent =
+        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+    setInterval(updateTime, 1000);
+    window.onload = updateTime;
+  </script>
+</head>
+
+<body class="min-h-screen p-4 text-white">
+  <div class="fade-text">shnavii</div>
+
+  <div class="fixed top-4 right-4 px-4 py-2 rounded shadow translucent-btn" id="time-display">--:--</div>
+
+  <!-- Popups -->
+  <div id="aboutPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 100px;">
+    <span class="close-btn" onclick="togglePopup('aboutPopup')">✖</span>
+    <h2 class="text-xl font-semibold mb-2">Hi, I'm Vaishnavi! 🌸</h2>
+    <p class="text-sm leading-relaxed">I'm a first-year Electronics Engineering student at VJTI. I adore blending creativity with logic—whether it's painting or coding. My secret? Staying consistent, growing little by little, every single day.</p>
+    <ul class="mt-4 text-sm list-disc pl-5">
+      <li>10th: Auxilium Convent High School (2022) – 94.2%</li>
+      <li>12th: 82%</li>
+      <li>JEE: 96.12 percentile</li>
+      <li>CET: 98.99 percentile</li>
+      <li>B.Tech Electronics @ VJTI (2022–2028)</li>
+    </ul>
+    <div class="mt-2 text-sm italic">Also in love with pastels & brushes 🎨</div>
+  </div>
+
+  <div id="projectsPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 140px;">
+    <span class="close-btn" onclick="togglePopup('projectsPopup')">✖</span>
+    <h2 class="text-xl font-semibold mb-2">✨ My Creations</h2>
+    <ul class="text-sm space-y-4">
+      <li>
+        <strong>🎮 Tic Tac Toe</strong><br>
+        A cute & functional game built with JavaScript.<br>
+        <em>GitHub:</em> <a href="#" class="text-blue-500">Link</a>
+      </li>
+      <li>
+        <strong>🌐 Portfolio Sites</strong><br>
+        Hand-crafted static sites for fun and learning!<br>
+        <em>GitHub:</em> <a href="#" class="text-blue-500">Link</a>
+      </li>
+    </ul>
+  </div>
+
+  <div id="contactPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 180px;">
+    <span class="close-btn" onclick="togglePopup('contactPopup')">✖</span>
+    <h2 class="text-xl font-semibold mb-4">🌷 Let's Connect</h2>
+    <p class="text-sm">Email: <a href="mailto:vdsanap_b24@el.vjti.ac.in" class="text-blue-500">vdsanap_b24@el.vjti.ac.in</a></p>
+    <p class="text-sm">LinkedIn: <a href="#" class="text-blue-500">Vaishnavi Sanap</a></p>
+    <p class="text-sm">GitHub: <a href="https://github.com/shnavii11" class="text-blue-500">shnavii11</a></p>
+    <p class="text-sm">Instagram: <a href="https://instagram.com/shnavii1111" class="text-blue-500">@shnavii1111</a></p>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="icon-button" onclick="togglePopup('aboutPopup')">
+      <img src="https://i.pinimg.com/736x/18/cb/36/18cb36002e87c6310e1a3b8a4eae4e88.jpg" alt="About">
+      <span>About</span>
+    </div>
+    <div class="icon-button" onclick="togglePopup('projectsPopup')">
+      <img src="https://i.pinimg.com/736x/28/76/9f/28769f2ddb4fcb7e094bc5201a2aabc6.jpg" alt="Projects">
+      <span>Projects</span>
+    </div>
+    <div class="icon-button" onclick="togglePopup('contactPopup')">
+      <img src="https://i.pinimg.com/736x/7a/bb/8e/7abb8e5d3e054c945b8e8c89e66041b6.jpg" alt="Contact">
+      <span>Contact</span>
+    </div>
+  </div>
+</body>
+
+</html>
