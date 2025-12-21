@@ -1,174 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vaishnavi Sanap Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>Vaishnavi Sanap | Portfolio</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.25); 
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      /* Darker Beige Tone as requested */
+      --accent-color: #C8B294; 
+    }
+
     body {
       font-family: 'Quicksand', sans-serif;
-      background: url('https://i.pinimg.com/736x/65/81/4b/65814b924b3a0b8b438abbf01798623d.jpg');
+      /* Background Image */
+      background: url('https://i.pinimg.com/736x/09/69/9c/09699cc15bc59f0dac89e802e9a794fb.jpg'); 
       background-size: cover;
       background-position: center;
-    }
-    .window {
-      box-shadow: 6px 6px 0px #000000;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(12px);
-      position: absolute;
-    }
-    .fade-text {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 4rem;
-      color: #22;
-      text-align: center;
-      font-weight: 800;
-      opacity: 0.6;
-      position: absolute;
-      top: 75%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      letter-spacing: 0.2rem;
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: center;
-      gap: 8rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(5px);
-      border-radius: 1rem;
-    }
-    .icon-button {
-      font-size: 1.5rem;
-      cursor: pointer;
-      border-radius: 1.5rem;
+      background-attachment: fixed;
       overflow: hidden;
+      cursor: none;
+    }
+
+    h1, h2, h3, .serif-font {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Custom Cursor */
+    .cursor-dot,
+    .cursor-outline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-color);
+    }
+    .cursor-outline {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+
+    /* Unified Glass Window Styling */
+    .window {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      opacity: 0;
+      transform: translate(-50%, -45%) scale(0.95);
+      pointer-events: none;
+      z-index: 10;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-weight: bold;
-      cursor: pointer;
+
+    .window.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
     }
-    .translucent-btn {
+    
+    .window.dragging {
+      transition: none; 
+      cursor: grabbing;
+    }
+
+    /* Horizontal Scroll Container */
+    .scroll-container {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden; 
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      height: 100%;
+      width: 100%;
+    }
+
+    .scroll-section {
+      min-width: 100%;
+      height: 100%;
+      scroll-snap-align: start;
+      overflow-y: auto; 
+      padding: 1.5rem;
+    }
+
+    /* Scrollbar styling */
+    .scroll-section::-webkit-scrollbar {
+      width: 4px;
+    }
+    .scroll-section::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scroll-section::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.4);
+      border-radius: 4px;
+    }
+    
+    /* Hide horizontal scrollbar but keep functionality */
+    .scroll-container::-webkit-scrollbar {
+      height: 0px; 
+      background: transparent;
+    }
+
+    /* Dock Styling */
+    .dock-container {
       background: rgba(255, 255, 255, 0.3);
-      color: #000;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
-    .icon-button img {
-      width: 70px;
-      height: 70px;
-      opacity: 0.7;
-      border-radius: 1.5rem;
+
+    .dock-icon {
+      transition: all 0.2s ease;
     }
-    .icon-button span {
-      font-size: 0.75rem;
-      color: black;
-      margin-top: 0.3rem;
+    .dock-icon:hover {
+      transform: translateY(-8px) scale(1.1);
     }
-    p, li, a, em {
-      font-weight: normal !important;
+
+    /* Hero Text */
+    .hero-text {
+      text-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: fadeIn 1.5s ease-out forwards;
+    }
+
+    /* Color classes for beige/brown */
+    .text-accent {
+      color: var(--accent-color);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tag {
+      background: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #334155;
     }
   </style>
-  <script>
-    const popups = ['aboutPopup', 'projectsPopup', 'contactPopup'];
-
-    function togglePopup(id) {
-      popups.forEach(popupId => {
-        if (popupId !== id) {
-          document.getElementById(popupId).classList.add('hidden');
-        }
-      });
-
-      const el = document.getElementById(id);
-      if (!el.classList.contains('hidden')) {
-        el.style.top = `${parseInt(el.style.top || 100) + 40}px`;
-      }
-      el.classList.toggle('hidden');
-    }
-
-    function updateTime() {
-      const now = new Date();
-      document.getElementById('time-display').textContent =
-        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-    }
-    setInterval(updateTime, 1000);
-    window.onload = updateTime;
-  </script>
 </head>
 
-<body class="min-h-screen p-4 text-white">
-  <div class="fade-text">shnavii</div>
+<body class="h-screen w-screen relative text-slate-800 selection:bg-indigo-200 selection:text-indigo-900">
 
-  <div class="fixed top-4 right-4 px-4 py-2 rounded shadow translucent-btn" id="time-display">--:--</div>
+  <!-- Custom Cursor Elements -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-outline" id="cursor-outline"></div>
 
-  <!-- Popups -->
-  <div id="aboutPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 100px;">
-    <span class="close-btn" onclick="togglePopup('aboutPopup')">✖</span>
-    <h2 class="text-xl font-semibold mb-2">Hi, I'm Vaishnavi! 🌸</h2>
-    <p class="text-sm leading-relaxed">I'm a first-year Electronics Engineering student at VJTI. I adore blending creativity with logic—whether it's painting or coding. My secret? Staying consistent, growing little by little, every single day.</p>
-    <ul class="mt-4 text-sm list-disc pl-5">
-      <li>10th: Auxilium Convent High School (2022) – 94.2%</li>
-      <li>12th: 82%</li>
-      <li>JEE: 96.12 percentile</li>
-      <li>CET: 98.99 percentile</li>
-      <li>B.Tech Electronics @ VJTI (2022–2028)</li>
-    </ul>
-    <div class="mt-2 text-sm italic">Also in love with pastels & brushes 🎨</div>
+  <!-- Top Bar -->
+  <div class="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-3 z-40 font-medium text-sm">
+    <div class="tracking-widest font-semibold text-accent" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1);">VAISHNAVI SANAP</div>
+    <div id="time-display" class="tabular-nums text-white/80">--:--</div>
   </div>
 
-  <div id="projectsPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 140px;">
-    <span class="close-btn" onclick="togglePopup('projectsPopup')">✖</span>
-    <h2 class="text-xl font-semibold mb-2">✨ My Creations</h2>
-    <ul class="text-sm space-y-4">
-      <li>
-        <strong>🎮 Tic Tac Toe</strong><br>
-        A cute & functional game built with JavaScript.<br>
-        <em>GitHub:</em> <a href="#" class="text-blue-500">Link</a>
-      </li>
-      <li>
-        <strong>🌐 Portfolio Sites</strong><br>
-        Hand-crafted static sites for fun and learning!<br>
-        <em>GitHub:</em> <a href="#" class="text-blue-500">Link</a>
-      </li>
-    </ul>
+  <!-- Central Hero Text - Moved to Bottom Center -->
+  <div class="absolute bottom-36 left-1/2 transform -translate-x-1/2 text-center hero-text select-none z-0">
+    <h1 class="text-6xl md:text-8xl font-bold tracking-tighter serif-font mb-2 text-accent opacity-90">shnavii</h1>
   </div>
 
-  <div id="contactPopup" class="hidden absolute left-1/2 transform -translate-x-1/2 w-11/12 md:w-2/3 lg:w-1/2 text-black p-6 rounded window z-50 transition duration-200 ease-in-out" style="top: 180px;">
-    <span class="close-btn" onclick="togglePopup('contactPopup')">✖</span>
-    <h2 class="text-xl font-semibold mb-4">🌷 Let's Connect</h2>
-    <p class="text-sm">Email: <a href="mailto:vdsanap_b24@el.vjti.ac.in" class="text-blue-500">vdsanap_b24@el.vjti.ac.in</a></p>
-    <p class="text-sm">LinkedIn: <a href="#" class="text-blue-500">Vaishnavi Sanap</a></p>
-    <p class="text-sm">GitHub: <a href="https://github.com/shnavii11" class="text-blue-500">shnavii11</a></p>
-    <p class="text-sm">Instagram: <a href="https://instagram.com/shnavii1111" class="text-blue-500">@shnavii1111</a></p>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <div class="bottom-nav">
-    <div class="icon-button" onclick="togglePopup('aboutPopup')">
-      <img src="https://i.pinimg.com/736x/18/cb/36/18cb36002e87c6310e1a3b8a4eae4e88.jpg" alt="About">
-      <span>About</span>
+  <!-- ==================== MAIN WINDOW ==================== -->
+  <div id="mainWindow" class="window fixed top-1/2 left-1/2 w-11/12 md:w-[700px] h-[75vh] rounded-2xl overflow-hidden glass-panel" data-x="0" data-y="0">
+    <!-- Header (Draggable Handle) -->
+    <div class="window-header bg-white/20 p-4 flex justify-between items-center border-b border-white/20 cursor-grab active:cursor-grabbing shrink-0">
+      <div class="flex space-x-2">
+        <div onclick="closeMainWindow()" class="w-3 h-3 rounded-full bg-red-400 cursor-pointer hover:bg-red-500 transition shadow-inner"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-400 shadow-inner"></div>
+        <div class="w-3 h-3 rounded-full bg-green-400 shadow-inner"></div>
+      </div>
+      <!-- Tabs Indicator (Visual Only) -->
+      <div class="flex gap-4 text-[10px] uppercase tracking-widest font-semibold opacity-60 text-slate-800">
+        <span id="indicator-about" class="transition-colors text-indigo-900">Profile</span>
+        <span>•</span>
+        <span id="indicator-projects" class="transition-colors">Work</span>
+        <span>•</span>
+        <span id="indicator-contact" class="transition-colors">Connect</span>
+      </div>
+      <div class="w-3"></div>
     </div>
-    <div class="icon-button" onclick="togglePopup('projectsPopup')">
-      <img src="https://i.pinimg.com/736x/28/76/9f/28769f2ddb4fcb7e094bc5201a2aabc6.jpg" alt="Projects">
-      <span>Projects</span>
-    </div>
-    <div class="icon-button" onclick="togglePopup('contactPopup')">
-      <img src="https://i.pinimg.com/736x/7a/bb/8e/7abb8e5d3e054c945b8e8c89e66041b6.jpg" alt="Contact">
-      <span>Contact</span>
+    
+    <!-- Horizontal Scrollable Content -->
+    <div class="scroll-container" id="scrollContainer">
+      
+      <!-- SECTION 1: ABOUT -->
+      <section id="section-about" class="scroll-section">
+        <div class="flex items-center gap-5 mb-8">
+          <div class="w-24 h-24 rounded-full bg-white/30 flex items-center justify-center text-4xl shadow-lg border border-white/40 shrink-0">
+            🪷
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-slate-900 serif-font">Vaishnavi Sanap</h2>
+            <p class="text-sm font-medium text-slate-700 mt-1">Electronics Engineering @ VJTI</p>
+            <div class="mt-2 flex gap-2">
+               <span class="text-[10px] bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full text-indigo-900">CGPA 7.9</span>
+               <span class="text-[10px] bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-full text-rose-900">2026 Batch</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/30 p-5 rounded-xl border border-white/20 mb-6 backdrop-blur-sm">
+          <p class="text-slate-800 leading-relaxed text-sm">
+            I bridge the gap between hardware logic and creative software solutions. 
+            Currently exploring the depths of <strong class="text-indigo-900">Deep Learning</strong> and <strong class="text-indigo-900">Speech Processing</strong> while maintaining my love for pastels and paintbrushes.
+          </p>
+        </div>
+
+        <h3 class="text-lg font-bold border-b border-slate-500/20 pb-2 mb-4 text-slate-900">Education</h3>
+        <ul class="space-y-4 text-sm mb-8">
+          <li class="relative pl-4 border-l-2 border-indigo-300">
+            <div class="flex justify-between font-bold text-slate-800">
+              <span>VJTI, Mumbai</span>
+              <span class="text-xs font-normal opacity-70">2022 - Present</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">B.Tech Electronics • Project X Mentee</p>
+          </li>
+          <li class="relative pl-4 border-l-2 border-rose-300">
+            <div class="flex justify-between font-bold text-slate-800">
+              <span>Sharadashram Vidyamandir</span>
+              <span class="text-xs font-normal opacity-70">2022</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">HSC (82%) • MHT-CET (98.9%ile)</p>
+          </li>
+        </ul>
+        
+        <div class="flex justify-end opacity-50 text-xs italic">
+          Scroll right for Projects ➝
+        </div>
+      </section>
+
+      <!-- SECTION 2: PROJECTS -->
+      <section id="section-projects" class="scroll-section">
+        <h2 class="text-2xl font-bold mb-1 serif-font text-slate-900">Featured Work</h2>
+        <p class="text-sm opacity-60 mb-6 text-slate-700">Latest developments in AI & Web</p>
+
+        <!-- Project Card 1 -->
+        <div class="bg-white/40 p-5 rounded-xl mb-4 shadow-sm hover:bg-white/60 transition group border border-white/30 backdrop-blur-sm">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-lg text-slate-900 group-hover:text-indigo-700 transition">Voice-to-English Translator</h3>
+            <span class="text-[10px] font-mono bg-white/50 text-indigo-800 px-2 py-1 rounded border border-white/40">2025</span>
+          </div>
+          <p class="text-sm text-slate-700 mt-2 leading-relaxed">
+            A real-time transcription system using a CNN+BiLSTM+CTC architecture. 
+            Achieved a <strong>WER of 0.21</strong> using advanced preprocessing (Mel Spectrograms).
+          </p>
+          <div class="mt-3 flex gap-2 text-xs opacity-80">
+            <span class="bg-indigo-500/10 px-2 py-1 rounded text-indigo-900">Python</span> 
+            <span class="bg-indigo-500/10 px-2 py-1 rounded text-indigo-900">PyTorch</span>
+          </div>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div class="bg-white/40 p-5 rounded-xl mb-4 shadow-sm hover:bg-white/60 transition group border border-white/30 backdrop-blur-sm">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-lg text-slate-900 group-hover:text-teal-700 transition">LLM Quiz Chatbot</h3>
+            <span class="text-[10px] font-mono bg-white/50 text-teal-800 px-2 py-1 rounded border border-white/40">2025</span>
+          </div>
+          <p class="text-sm text-slate-700 mt-2 leading-relaxed">
+            Interactive quiz platform powered by OpenAI API. Features context-aware question generation and adaptive difficulty scaling.
+          </p>
+          <div class="mt-3 flex gap-2 text-xs opacity-80">
+            <span class="bg-teal-500/10 px-2 py-1 rounded text-teal-900">React</span> 
+            <span class="bg-teal-500/10 px-2 py-1 rounded text-teal-900">OpenAI</span>
+          </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="mt-8">
+          <h3 class="text-xs font-bold uppercase tracking-widest opacity-60 mb-3 text-slate-800">Milestones</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white/30 p-4 rounded-lg border border-white/20 hover:bg-white/40 transition">
+              <div class="font-bold text-slate-900">Hacktoberfest</div>
+              <div class="text-xs text-slate-600">Contributor 2025</div>
+            </div>
+            <div class="bg-white/30 p-4 rounded-lg border border-white/20 hover:bg-white/40 transition">
+              <div class="font-bold text-slate-900">100+ Problems</div>
+              <div class="text-xs text-slate-600">LeetCode Solved</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: CONTACT -->
+      <section id="section-contact" class="scroll-section">
+        <div class="h-full flex flex-col items-center justify-center text-center">
+          <div class="w-24 h-24 bg-white/40 backdrop-blur-md text-slate-800 rounded-full flex items-center justify-center mb-6 text-4xl shadow-lg border border-white/50">
+            ☏
+          </div>
+          <h2 class="text-3xl font-bold mb-2 text-slate-900 serif-font">Let's Talk</h2>
+          <p class="text-slate-600 mb-8 max-w-sm">
+            I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
+          </p>
+          
+          <div class="w-full max-w-xs space-y-4">
+            <a href="mailto:tanvisanap764@gmail.com" class="flex items-center justify-center gap-3 w-full p-3 bg-white/40 hover:bg-white/60 rounded-xl transition text-sm font-medium text-slate-800 border border-white/30 group">
+              <i data-lucide="mail" class="w-4 h-4 group-hover:scale-110 transition"></i> 
+              tanvisanap764@gmail.com
+            </a>
+            <a href="https://linkedin.com/in/vaishnavi-sanap" target="_blank" class="flex items-center justify-center gap-3 w-full p-3 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 rounded-xl text-[#0077b5] transition text-sm font-medium border border-[#0077b5]/20 group">
+              <i data-lucide="linkedin" class="w-4 h-4 group-hover:scale-110 transition"></i> 
+              Vaishnavi Sanap
+            </a>
+            <a href="https://github.com/shnavii1111" target="_blank" class="flex items-center justify-center gap-3 w-full p-3 bg-slate-900/10 hover:bg-slate-900/20 text-slate-900 rounded-xl transition text-sm font-medium border border-slate-900/20 group">
+              <i data-lucide="github" class="w-4 h-4 group-hover:scale-110 transition"></i> 
+              shnavii1111
+            </a>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
+
+  <!-- Bottom Dock -->
+  <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 dock-container rounded-3xl px-6 py-4 flex gap-8 z-50">
+    <button onclick="navigateTo('section-about')" class="dock-icon flex flex-col items-center gap-1 group relative">
+      <div class="w-14 h-14 bg-white/40 rounded-2xl flex items-center justify-center shadow-lg border border-white/50 group-hover:bg-white/60 transition backdrop-blur-md overflow-hidden">
+        <img src="https://i.pinimg.com/736x/8f/47/b2/8f47b201e9304d57bfc7ee0fbcfea084.jpg" alt="About" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
+      </div>
+      <span class="text-[10px] font-medium text-slate-700 bg-white/80 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition absolute -top-8 pointer-events-none">About</span>
+    </button>
+
+    <button onclick="navigateTo('section-projects')" class="dock-icon flex flex-col items-center gap-1 group relative">
+      <div class="w-14 h-14 bg-white/40 rounded-2xl flex items-center justify-center shadow-lg border border-white/50 group-hover:bg-white/60 transition backdrop-blur-md overflow-hidden">
+        <img src="https://i.pinimg.com/736x/0e/1e/5f/0e1e5ff08f52eebf9c24254eac64db24.jpg" alt="Work" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
+      </div>
+      <span class="text-[10px] font-medium text-slate-700 bg-white/80 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition absolute -top-8 pointer-events-none">Work</span>
+    </button>
+
+    <button onclick="navigateTo('section-contact')" class="dock-icon flex flex-col items-center gap-1 group relative">
+      <div class="w-14 h-14 bg-white/40 rounded-2xl flex items-center justify-center shadow-lg border border-white/50 group-hover:bg-white/60 transition backdrop-blur-md overflow-hidden">
+        <img src="https://i.pinimg.com/736x/fc/9d/ab/fc9dab387b6e30890a10917708e4e88c.jpg" alt="Contact" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
+      </div>
+      <span class="text-[10px] font-medium text-slate-700 bg-white/80 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition absolute -top-8 pointer-events-none">Contact</span>
+    </button>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // ================= NAVIGATION LOGIC =================
+    const mainWindow = document.getElementById('mainWindow');
+    const scrollContainer = document.getElementById('scrollContainer');
+    
+    // Indicators
+    const indAbout = document.getElementById('indicator-about');
+    const indProjects = document.getElementById('indicator-projects');
+    const indContact = document.getElementById('indicator-contact');
+    
+    function navigateTo(sectionId) {
+      // 1. Open Window if closed
+      if (!mainWindow.classList.contains('active')) {
+        mainWindow.classList.add('active');
+        // Reset z-index just in case
+        mainWindow.style.zIndex = 100;
+      }
+      
+      // 2. Scroll to section
+      const section = document.getElementById(sectionId);
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeMainWindow() {
+      mainWindow.classList.remove('active');
+    }
+
+    // Update active tab indicator on scroll
+    scrollContainer.addEventListener('scroll', () => {
+      const scrollLeft = scrollContainer.scrollLeft;
+      const width = scrollContainer.offsetWidth;
+      
+      indAbout.className = "transition-colors opacity-50";
+      indProjects.className = "transition-colors opacity-50";
+      indContact.className = "transition-colors opacity-50";
+
+      if (scrollLeft < width / 2) {
+        indAbout.className = "transition-colors text-indigo-900 opacity-100 font-bold";
+      } else if (scrollLeft < width * 1.5) {
+        indProjects.className = "transition-colors text-indigo-900 opacity-100 font-bold";
+      } else {
+        indContact.className = "transition-colors text-indigo-900 opacity-100 font-bold";
+      }
+    });
+
+    // ================= CUSTOM CURSOR =================
+    const cursorDot = document.getElementById("cursor-dot");
+    const cursorOutline = document.getElementById("cursor-outline");
+
+    window.addEventListener("mousemove", (e) => {
+      const posX = e.clientX;
+      const posY = e.clientY;
+
+      cursorDot.style.left = `${posX}px`;
+      cursorDot.style.top = `${posY}px`;
+
+      cursorOutline.animate({
+        left: `${posX}px`,
+        top: `${posY}px`
+      }, { duration: 500, fill: "forwards" });
+    });
+
+    // ================= DRAG LOGIC =================
+    document.querySelectorAll('.window-header').forEach(header => {
+      header.addEventListener('mousedown', startDrag);
+      header.addEventListener('touchstart', startDrag); 
+    });
+
+    function startDrag(e) {
+      // Allow clicking buttons inside header without dragging
+      if(e.target.onclick) return;
+      
+      e.preventDefault(); 
+      const isTouch = e.type === 'touchstart';
+      const event = isTouch ? e.touches[0] : e;
+      
+      const windowEl = this.parentElement;
+      let currentX = parseFloat(windowEl.getAttribute('data-x')) || 0;
+      let currentY = parseFloat(windowEl.getAttribute('data-y')) || 0;
+
+      const startX = event.clientX;
+      const startY = event.clientY;
+
+      windowEl.classList.add('dragging');
+
+      function onMouseMove(moveEvent) {
+        const moveEv = isTouch ? moveEvent.touches[0] : moveEvent;
+        const dx = moveEv.clientX - startX;
+        const dy = moveEv.clientY - startY;
+        
+        const newX = currentX + dx;
+        const newY = currentY + dy;
+
+        windowEl.style.transform = `translate(calc(-50% + ${newX}px), calc(-50% + ${newY}px)) scale(1)`;
+      }
+
+      function onMouseUp(upEvent) {
+        const upEv = isTouch ? upEvent.changedTouches[0] : upEvent;
+        const clientX = upEv ? upEv.clientX : event.clientX;
+        const clientY = upEv ? upEv.clientY : event.clientY;
+
+        // If simple mouse up
+        if (!isTouch) {
+           const dx = upEvent.clientX - startX;
+           const dy = upEvent.clientY - startY;
+           var finalX = currentX + dx;
+           var finalY = currentY + dy;
+        } else {
+           // For touch end, simplified here:
+           var finalX = currentX; 
+           var finalY = currentY;
+        }
+        
+        if (!isTouch) {
+           windowEl.setAttribute('data-x', finalX);
+           windowEl.setAttribute('data-y', finalY);
+        }
+        
+        windowEl.classList.remove('dragging');
+        
+        if (isTouch) {
+            document.removeEventListener('touchmove', onMouseMove);
+            document.removeEventListener('touchend', onMouseUp);
+        } else {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+      }
+
+      if (isTouch) {
+          document.addEventListener('touchmove', onMouseMove, { passive: false });
+          document.addEventListener('touchend', onMouseUp);
+      } else {
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+      }
+    }
+    
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time-display').textContent = 
+        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
 </body>
-
 </html>
