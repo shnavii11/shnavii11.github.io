@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Project site served at https://shnavii11.github.io/portfolio-vaishnavi/
-  base: '/portfolio-vaishnavi/',
+  // User site served at https://shnavii11.github.io/
+  base: '/',
   server: {
     port: 5173,
     host: true,
