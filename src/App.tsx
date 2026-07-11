@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import LiquidEther from './LiquidEther';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/vaishnavi-sanap/';
@@ -70,6 +71,41 @@ const projects = [
       'A Claude Code plugin that parses a resume into a keyword profile and surfaces matched hackathons and internships from four live sources, ranked transparently.',
   },
 ];
+
+function Clip({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true;
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    };
+    // Browsers block autoplay for off-screen videos — start it once visible.
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && tryPlay()),
+      { threshold: 0.2 }
+    );
+    io.observe(v);
+    tryPlay(); // in case it's already on screen
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      className="clip"
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+    />
+  );
+}
 
 export default function App() {
   return (
@@ -152,22 +188,7 @@ export default function App() {
 
           <div className="video-grid">
             {clips.map((src) => (
-              <video
-                key={src}
-                className="clip"
-                src={src}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                ref={(el) => {
-                  if (!el) return;
-                  el.muted = true;
-                  const p = el.play();
-                  if (p && typeof p.catch === 'function') p.catch(() => {});
-                }}
-              />
+              <Clip key={src} src={src} />
             ))}
           </div>
         </section>
