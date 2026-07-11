@@ -61,7 +61,14 @@ export default function MusicPlayer() {
         videoId: VIDEO_ID,
         width: '0',
         height: '0',
-        playerVars: { playsinline: 1, controls: 0, disablekb: 1, rel: 0 },
+        playerVars: {
+          playsinline: 1,
+          controls: 0,
+          disablekb: 1,
+          rel: 0,
+          autoplay: 1,
+          mute: 1,
+        },
         events: {
           onReady: (e: any) => {
             if (!mounted) return;
@@ -71,6 +78,13 @@ export default function MusicPlayer() {
               if (t) setTitle(t);
             } catch {
               /* keep fallback title */
+            }
+            // Start immediately (muted) — browsers allow muted autoplay.
+            try {
+              e.target.mute();
+              e.target.playVideo();
+            } catch {
+              /* will start on first user gesture instead */
             }
           },
           onStateChange: (e: any) => {
@@ -91,9 +105,33 @@ export default function MusicPlayer() {
     };
     raf = requestAnimationFrame(tick);
 
+    // Unmute (and ensure it's playing) on the first real user interaction —
+    // browsers block audible autoplay until the user acts.
+    const gestures = ['pointerdown', 'keydown', 'touchstart'];
+    const unlock = (ev: Event) => {
+      const p = playerRef.current;
+      if (!p) return;
+      try {
+        p.unMute();
+        p.setVolume(100);
+        const el = ev.target as HTMLElement | null;
+        const fromButton = !!el?.closest?.('.player-btn');
+        if (!fromButton && p.getPlayerState?.() !== window.YT?.PlayerState?.PLAYING) {
+          p.playVideo();
+        }
+      } catch {
+        /* noop */
+      }
+      removeGestures();
+    };
+    const removeGestures = () =>
+      gestures.forEach((g) => window.removeEventListener(g, unlock));
+    gestures.forEach((g) => window.addEventListener(g, unlock, { passive: true }));
+
     return () => {
       mounted = false;
       cancelAnimationFrame(raf);
+      removeGestures();
       try {
         playerRef.current?.destroy?.();
       } catch {
