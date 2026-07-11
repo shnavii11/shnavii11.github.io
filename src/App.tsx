@@ -146,7 +146,7 @@ export default function App() {
         </section>
 
         {/* Hobbies */}
-        <section className="section" id="beyond">
+        <section className="section section--wide" id="beyond">
           <h2 className="section-title">Beyond the Screen</h2>
           <p className="hobbies">Gardening · Wall painting · Reading mythology</p>
 
@@ -160,7 +160,13 @@ export default function App() {
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
+                ref={(el) => {
+                  if (!el) return;
+                  el.muted = true;
+                  const p = el.play();
+                  if (p && typeof p.catch === 'function') p.catch(() => {});
+                }}
               />
             ))}
           </div>
