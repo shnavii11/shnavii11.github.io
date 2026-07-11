@@ -245,6 +245,32 @@ body {
   color: rgba(245, 245, 245, 0.82);
 }
 
+/* ---------- Video grid ---------- */
+.video-grid {
+  margin-top: 2.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.7rem, 1.8vw, 1.2rem);
+  pointer-events: auto;
+}
+
+.clip {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  background: #0d0d0d;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 560px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 760px) {
   .hero {
     flex-direction: column;

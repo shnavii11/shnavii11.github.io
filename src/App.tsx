@@ -42,6 +42,8 @@ const socials = [
   { label: 'X (Twitter)', href: TWITTER_URL, Icon: IconX, external: true },
 ];
 
+const clips = ['/videos/v1.mp4', '/videos/v2.mp4', '/videos/v3.mp4'];
+
 const projects = [
   {
     name: 'Chebyshev Q-KAN',
@@ -147,6 +149,21 @@ export default function App() {
         <section className="section" id="beyond">
           <h2 className="section-title">Beyond the Screen</h2>
           <p className="hobbies">Gardening · Wall painting · Reading mythology</p>
+
+          <div className="video-grid">
+            {clips.map((src) => (
+              <video
+                key={src}
+                className="clip"
+                src={src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              />
+            ))}
+          </div>
         </section>
       </main>
     </div>
