@@ -61,13 +61,91 @@ body {
   position: relative;
 }
 
-.hero-photo {
+.hero-left {
   flex-shrink: 0;
   width: clamp(220px, 32vw, 380px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.hero-photo {
+  width: 100%;
   aspect-ratio: 640 / 672;
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Music player (under the photo) ---------- */
+.player {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  pointer-events: auto;
+}
+
+.player-yt {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.player-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #9bc3fb;
+  color: #05070d;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.player-btn:hover:not(:disabled) {
+  transform: scale(1.06);
+  background: #b9d5ff;
+}
+
+.player-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.player-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+}
+
+.player-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.player-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #9bc3fb;
 }
 
 .hero-info {
@@ -284,7 +362,7 @@ body {
     justify-content: center;
     padding-top: 12vh;
   }
-  .hero-photo {
+  .hero-left {
     width: clamp(200px, 62vw, 320px);
   }
 }

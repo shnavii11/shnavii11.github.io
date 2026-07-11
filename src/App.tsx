@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import LiquidEther from './LiquidEther';
+import MusicPlayer from './MusicPlayer';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/vaishnavi-sanap/';
 const GITHUB_URL = 'https://github.com/shnavii11';
@@ -137,7 +138,10 @@ export default function App() {
       <main className="content">
         {/* Hero — photo on the left, info beside it */}
         <section className="hero">
-          <img className="hero-photo" src="/me.jpg" alt="Vaishnavi" />
+          <div className="hero-left">
+            <img className="hero-photo" src="/me.jpg" alt="Vaishnavi" />
+            <MusicPlayer />
+          </div>
 
           <div className="hero-info">
             <h1 className="name">Vaishnavi</h1>
